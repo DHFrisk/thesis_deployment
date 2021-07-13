@@ -56,7 +56,7 @@ INSTALLED_APPS = [
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
-    # 'whitenoise.middleware.WhiteNoiseMiddleware', for production serving assets in heroku
+    'whitenoise.middleware.WhiteNoiseMiddleware', #for production serving assets in heroku
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -90,36 +90,36 @@ WSGI_APPLICATION = 'tesis.wsgi.application'
 # https://docs.djangoproject.com/en/3.2/ref/settings/#databases
 
 DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': 'db.sqlite3',
-    }
+#     'default': {
+#         'ENGINE': 'django.db.backends.sqlite3',
+#         'NAME': 'db.sqlite3',
+#     }
     
-   # 'default': {
-   #     'ENGINE': 'sql_server.pyodbc',
-   #     'NAME': 'thesis_project',
-   #     'USER': 'thesis',
-   #     'PASSWORD': 'toorbot123*',
-   #     'HOST': 'thesis-project.database.windows.net',
-   #     'PORT': '1433',
+   'default': {
+       'ENGINE': 'sql_server.pyodbc',
+       'NAME': 'thesis_project',
+       'USER': 'thesis',
+       'PASSWORD': 'toorbot123*',
+       'HOST': 'thesis-project.database.windows.net',
+       'PORT': '1433',
 
 
-   #     'OPTIONS':{
-   #         'driver': 'ODBC Driver 17 for SQL Server',
-   #     }
+       'OPTIONS':{
+           'driver': 'ODBC Driver 17 for SQL Server',
+       }
 
-   # },
+   },
 
-   # "multimedia":{
-   #     "ENGINE": "djongo",
-   #     "NAME": "multimedia",
-   #     "USER": "root",
-   #     "PASSWORD": "toorbot123",
-   #     "CLIENT":{
-   #         "HOST": "mongodb+srv://root:toorbot123@cluster0.nzcgo.mongodb.net/test",
-   #         "PORT": "27017",
-   #     }
-   # }
+   "multimedia":{
+       "ENGINE": "djongo",
+       "NAME": "multimedia",
+       "USER": "root",
+       "PASSWORD": "toorbot123",
+       "CLIENT":{
+           "HOST": "mongodb+srv://root:toorbot123@cluster0.nzcgo.mongodb.net/test",
+           "PORT": "27017",
+       }
+   }
 }
 
 
@@ -168,6 +168,6 @@ STATICFILES_DIRS= [
 
 # Simplified static file serving.
 # https://warehouse.python.org/project/whitenoise/
-# STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
+STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
