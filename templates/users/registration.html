@@ -1,0 +1,62 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}
+<title>Registration</title>
+{% endblock title %}
+
+{% block content %}
+<div class="row justify-content-center">
+	<div class="card col-md-6">
+		<div class="card-body">
+			<form method="post" action="{% url 'backend_register' %}">
+				{% csrf_token %}
+				<img src="{% static 'dist/img/registration_icon.png' %}" style="height: 220px; width:50%;">
+				<br>
+				<br>
+ 				
+ 				<div class="form-group justify-content-center">
+ 					{% for field in form %}
+ 					<div class="fieldWrapper">
+ 						<div class="">
+ 							{{ field.label_tag }}
+ 						</div>
+ 						<div class="">
+ 							{{ field }}
+ 						</div>
+ 					</div>
+ 					<br>
+ 					{% endfor %}
+ 				</div>
+				{% for field in registration_form %}
+				{% for error in field.errors %}
+				<script type="text/javascript">
+					Swal.fire({
+					    title: '¡Ha ocurrido un error!',
+					      text: '{{ error }}',
+					       // icon: '{{ message.tags }}',
+					      confirmButtonText: 'Aceptar'
+					  });
+				</script>
+				{% endfor %}
+				{% endfor %}
+
+				{% if registration_form.non_field_errors %}
+				<script type="text/javascript">
+					Swal.fire({
+					    title: '¡Ha ocurrido un error!',
+					      text: '{{registration_form.non_field_errors}}',
+					       // icon: '{{ message.tags }}',
+					      confirmButtonText: 'Aceptar'
+					  });
+				</script>
+				{% endif %}
+
+				
+
+				<button class="btn btn-lg btn-primary btn-block" type="submit">Registrar</button>
+			</form>
+		</div>
+	</div>
+</div>
+{% endblock content %}
