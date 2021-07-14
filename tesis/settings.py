@@ -23,7 +23,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = 'django-insecure-e7tbr9wt0^8pl#u+i)65o&2rf94)o0j!e@+hsgfn+(562_zlno'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
+DEBUG = True
 
 AUTH_USER_MODEL= "users.User"
 AUTHENTICATION_BACKENDS= [
@@ -33,7 +33,7 @@ AUTHENTICATION_BACKENDS= [
     ]
 # LOGIN_REDIRECT_URL= "users/view_dashboard"
 
-ALLOWED_HOSTS = ["127.0.0.1", "localhost", "www.stark-oasis-79142.herokuapp.com"]
+ALLOWED_HOSTS = []
 
 
 # Application definition
