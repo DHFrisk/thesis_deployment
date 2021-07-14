@@ -20,10 +20,13 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/3.2/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-e7tbr9wt0^8pl#u+i)65o&2rf94)o0j!e@+hsgfn+(562_zlno'
+# SECRET_KEY = 'django-insecure-e7tbr9wt0^8pl#u+i)65o&2rf94)o0j!e@+hsgfn+(562_zlno'
+
+SECRET_KEY = os.environ.get('DJANGO_SECRET_KEY', 'django-insecure-e7tbr9wt0^8pl#u+i)65o&2rf94)o0j!e@+hsgfn+(562_zlno')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+# DEBUG = True
+DEBUG = os.environ.get('DJANGO_DEBUG', '') != 'False'
 
 AUTH_USER_MODEL= "users.User"
 AUTHENTICATION_BACKENDS= [
@@ -33,7 +36,7 @@ AUTHENTICATION_BACKENDS= [
     ]
 # LOGIN_REDIRECT_URL= "users/view_dashboard"
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ["stark-oasis-79142.herokuapp.com"]
 
 
 # Application definition
