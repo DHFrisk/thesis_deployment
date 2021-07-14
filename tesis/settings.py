@@ -33,7 +33,7 @@ AUTHENTICATION_BACKENDS= [
     ]
 # LOGIN_REDIRECT_URL= "users/view_dashboard"
 
-ALLOWED_HOSTS = ["https://stark-oasis-79142.herokuapp.com/"]
+ALLOWED_HOSTS = ["127.0.0.1", "localhost", "www.stark-oasis-79142.herokuapp.com"]
 
 
 # Application definition
