@@ -1,2 +1,2 @@
-    release: python manage.py migrate
-    web: gunicorn tesis.wsgi --log-file -
+web: gunicorn tesis.wsgi --log-file -
+release: python manage.py migrate
