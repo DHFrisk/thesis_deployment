@@ -20,13 +20,10 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/3.2/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-# SECRET_KEY = 'django-insecure-e7tbr9wt0^8pl#u+i)65o&2rf94)o0j!e@+hsgfn+(562_zlno'
-
-SECRET_KEY = os.environ.get('DJANGO_SECRET_KEY', 'django-insecure-e7tbr9wt0^8pl#u+i)65o&2rf94)o0j!e@+hsgfn+(562_zlno')
+SECRET_KEY = 'django-insecure-e7tbr9wt0^8pl#u+i)65o&2rf94)o0j!e@+hsgfn+(562_zlno'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-# DEBUG = True
-DEBUG = os.environ.get('DJANGO_DEBUG', '') != 'False'
+DEBUG = True
 
 AUTH_USER_MODEL= "users.User"
 AUTHENTICATION_BACKENDS= [
@@ -36,7 +33,7 @@ AUTHENTICATION_BACKENDS= [
     ]
 # LOGIN_REDIRECT_URL= "users/view_dashboard"
 
-ALLOWED_HOSTS = ["stark-oasis-79142.herokuapp.com"]
+ALLOWED_HOSTS = ["*"]
 
 
 # Application definition
@@ -59,7 +56,7 @@ INSTALLED_APPS = [
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
-    'whitenoise.middleware.WhiteNoiseMiddleware', #for production serving assets in heroku
+    # 'whitenoise.middleware.WhiteNoiseMiddleware', for production serving assets in heroku
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -96,7 +93,7 @@ DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
         'NAME': 'db.sqlite3',
-    },
+    }
     
    # 'default': {
    #     'ENGINE': 'sql_server.pyodbc',
@@ -113,16 +110,16 @@ DATABASES = {
 
    # },
 
-   "multimedia":{
-       "ENGINE": "djongo",
-       "NAME": "multimedia",
-       "USER": "root",
-       "PASSWORD": "toorbot123",
-       "CLIENT":{
-           "HOST": "mongodb+srv://root:toorbot123@cluster0.nzcgo.mongodb.net/test",
-           "PORT": "27017",
-       }
-   }
+   # "multimedia":{
+   #     "ENGINE": "djongo",
+   #     "NAME": "multimedia",
+   #     "USER": "root",
+   #     "PASSWORD": "toorbot123",
+   #     "CLIENT":{
+   #         "HOST": "mongodb+srv://root:toorbot123@cluster0.nzcgo.mongodb.net/test",
+   #         "PORT": "27017",
+   #     }
+   # }
 }
 
 
@@ -163,26 +160,21 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/3.2/howto/static-files/
 
 STATIC_URL = '/static/'
-# The absolute path to the directory where collectstatic will collect static files for deployment.
-STATIC_ROOT = BASE_DIR / 'static'
-
-# STATICFILES_DIRS= [
-#     os.path.join(BASE_DIR, 'static')
-# ]
-
+STATICFILES_DIRS= [
+    os.path.join(BASE_DIR, 'static')
+]
 # Default primary key field type
 # https://docs.djangoproject.com/en/3.2/ref/settings/#default-auto-field
 
-
 # Simplified static file serving.
 # https://warehouse.python.org/project/whitenoise/
-STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
-
-
-# Heroku: Update database configuration from $DATABASE_URL.
-import dj_database_url
-db_from_env = dj_database_url.config(conn_max_age=500)
-DATABASES['default'].update(db_from_env)
-
+# STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+
+EMAIL_HOST = 'smtp-relay.sendinblue.com'
+EMAIL_PORT = 587
+EMAIL_HOST_USER = 'ricboarg@yahoo.com'
+EMAIL_HOST_PASSWORD = 'S8VD09TyRYQErdBb'

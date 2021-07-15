@@ -5,11 +5,7 @@ from django.db.models.signals import post_save
 from django.contrib.auth import authenticate
 from django.apps import apps
 from django.contrib.auth.models import Group
-# from django.contrib.auth.models import PermissionsMixin 
-# from django.core.mail import send_mail
-# from django.contrib.auth.base_user import AbstractBaseUser
-# from 
-# Create your models here.
+from django.core.mail import send_mail
 
 
 class UserManager(BaseUserManager):
@@ -80,6 +76,12 @@ class User(AbstractBaseUser, PermissionsMixin):
 
     def get_email(self):
         return self.email
+
+    def email_user(self, subject, message, from_email=None, **kwargs):
+        send_mail(subject, message, from_email, [self.email], **kwargs)
+
+    def get_full_name(self):
+        return self.first_name + " " + self.last_name                                                                               
 
     def get_user_allowed_apps(self):
         apps_configs= apps.get_app_configs()
