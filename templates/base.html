@@ -41,6 +41,7 @@
     <img class="animation__wobble" src="{% static 'dist/img/AdminLTELogo.png' %}" alt="AdminLTELogo" height="60" width="60">
   </div>
 
+  {% block navbar %}
   <!-- Navbar -->
   <nav class="main-header navbar navbar-expand navbar-dark">
     <!-- Left navbar links -->
@@ -56,6 +57,7 @@
       </li>
     </ul>
   </nav>
+  {% endblock navbar %}
 
   {% block sidebar %}
 	<!-- Main Sidebar Container -->
@@ -152,6 +154,7 @@
 
   <section class="content">
     <div class="container-fluid" style="padding-top: 10 %;">
+
 {% block content %}
 {% endblock content %}
     </div>
