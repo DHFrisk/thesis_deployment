@@ -148,6 +148,7 @@ def backend_add_user(request):
 			errors_raw= str(form.errors.as_data())
 			return redirect("alert", message_type="warning", message=f"No se han llenado los campos de forma correcta, intente de nuevo. "+errors_raw, view="view_add_user")
 	except Exception as e:
+		print(e)
 		return redirect("alert", message_type="error", message=str(e), view="view_add_user")
 
 

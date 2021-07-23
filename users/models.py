@@ -14,6 +14,7 @@ class UserManager(BaseUserManager):
     def create_user(self, email, first_name, last_name, username, password=None, user_creation=None, is_admin=False, is_staff=False, is_superuser=False):
         if not email or not username or not first_name or not last_name:
             raise ValueError("Todos los campos son necesarios: email, usuario, nombre y apellido")
+        
         new_user= self.model(
             email= self.normalize_email(email),
             username= username,

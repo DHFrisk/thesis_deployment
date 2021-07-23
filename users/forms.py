@@ -10,11 +10,12 @@ from functools import partial
 from itertools import groupby
 from operator import attrgetter
 from django.forms.models import ModelChoiceIterator, ModelChoiceField
+from django.contrib.auth.password_validation import validate_password
 
 
 class RegistrationForm(UserCreationForm):
-    email= forms.EmailField(max_length=255, help_text="Es necesario una dirección de correo electrónico válida.", label="Dirección de correo electrónico", widget=forms.EmailInput(attrs={"required":True, "class":"form-control form-control-border border-width-2"}))
-    groups= forms.ModelMultipleChoiceField(label="Grupo(s)", widget=forms.CheckboxSelectMultiple(attrs={"class":"", "style":""}), queryset=Group.objects.all(), blank=True)
+    email= forms.EmailField(max_length=255, help_text="Es necesario una dirección de correo electrónico válida.", label="Dirección de correo electrónico", widget=forms.EmailInput(attrs={"class":"form-control form-control-border border-width-2"}))
+    groups= forms.ModelMultipleChoiceField(label="Grupo(s)", widget=forms.CheckboxSelectMultiple, queryset=Group.objects.all(), blank=True)
     # groups= forms.ModelMultipleChoiceField(label="Grupo(s)", widget=forms.SelectMultiple(attrs={"class":"custom-select col-md-12"}), queryset=Group.objects.all(), blank=True)
     password1= forms.CharField(widget=forms.PasswordInput(attrs={"class":"form-control form-control-border border-width-2", "readonly": True}), label="Contraseña (Auto-generada)")
     password2= forms.CharField(widget=forms.PasswordInput(attrs={"class":"form-control form-control-border border-width-2", "readonly": True}), label="Confirmar contraseña (Auto-generada)")
@@ -39,22 +40,19 @@ class RegistrationForm(UserCreationForm):
         "first_name": forms.TextInput(attrs={"class":"form-control form-control-border border-width-2"}),
         "last_name": forms.TextInput(attrs={"class":"form-control form-control-border border-width-2"}),
         }
+    
+    def save(self, commit=True):
+        if self.cleaned_data["password1"] == self.cleaned_data["password2"]:
+            try:
+                new_user= User.objects.create(email=self.cleaned_data["email"], username=self.cleaned_data["username"], first_name=self.cleaned_data["first_name"], last_name=self.cleaned_data["last_name"], is_staff=self.cleaned_data["is_staff"], is_admin=self.cleaned_data["is_admin"], is_superuser=self.cleaned_data["is_superuser"], user_creation=self.cleaned_data["user_creation"])
+                new_user.set_password(self.cleaned_data["password1"])
+            except Exception as e:
+                return e
+        else:
+            raise ValueError("Las contraseñas generadas no coinciden.")
 
-    def clean_email(self):
-        email= self.cleaned_data["email"].lower()
-        try:
-            user= User.objects.get(email=email)
-        except Exception as e:
-            return email
-        raise forms.ValidationError("La dirección de correo electrónico ingresada ya está registrada.")
-
-    def clean_username(self):
-        username= self.cleaned_data["username"]
-        try:
-            user= User.objects.get(username=username)
-        except Exception as e:
-            return username
-        raise forms.ValidationError("El nombre de usuario ingresado ya está registrada.")
+        
+        
 
 
 class LoginForm(forms.Form):
