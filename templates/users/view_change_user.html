@@ -1,0 +1,104 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}
+<title>Listado usuarios</title>
+{% endblock title %}
+
+{% block content %}
+<div class="">
+	<div class="card">
+        <div class="card-header">
+            <h3 class="card-title">Listado usuarios</h3>
+        </div>
+        <div class="card-body" style="height:500px;">
+            <table class="table table-striped table-bordered" id="table-users" style="width: 100%;">
+                <thead class="table-dark">
+                    <tr>
+                        <td>#</td>
+                        <td>Nombre(s)</td>
+                        <td>Apellido(s)</td>
+                        <td>e-mail</td>
+                        <td>Staff</td>
+                        <td>Admin</td>
+                        <td>Super-usuario</td>
+						<td>Fecha de registro</td>
+						<td>Fecha de último ingreso</td>
+						<td>Editar</td>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for user in users %}
+                    <tr>
+                        <td>{{user.id}}</td>
+                        <td>{{user.first_name}}</td>
+                        <td>{{user.last_name}}</td>
+                        <td>{{user.email}}</td>
+                        <td>
+                            {% if user.is_staff %}
+                            <input type="checkbox" class="" checked disabled>
+                            {% else %}
+                            <input type="checkbox" class="" disabled>
+                            {% endif %}
+                        </td>
+                        <td>
+                            {% if user.is_admin %}
+                            <input type="checkbox" class="" checked disabled>
+                            {% else %}
+                            <input type="checkbox" class="" disabled>
+                            {% endif %}
+                        </td>
+                        <td>
+                            {% if user.is_superuser %}
+                            <input type="checkbox" class="" checked disabled>
+                            {% else %}
+                            <input type="checkbox" class="" disabled>
+                            {% endif %}
+                        </td>
+						<td>{{ user.date_joined }}</td>
+						<td>{{ user.last_login }}</td>
+						<td>
+							<form action="{% url 'view_change_single_user' user_id=user.id %}">
+								<button class="btn btn-default" type="submit"><i class="fas fa-user-edit"></i></button>
+								<!-- <i class="fas fa-user-edit"></i> -->
+								<!-- <i class="far fa-edit"></i> -->
+							</form>
+						</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+<script>
+    $(document).ready(function(){
+        $("#table-users").DataTable({
+            language:{
+                "decimal":        "",
+                "emptyTable":     "No hay datos disponibles en la tabla",
+                "info":           "Mostrar _START_ a _END_ de _TOTAL_ entradas",
+                "infoEmpty":      "Mostrando 0 a 0 de 0 entradas",
+                "infoFiltered":   "(filtered from _MAX_ total entries)",
+                "infoPostFix":    "",
+                "thousands":      ",",
+                "lengthMenu":     "Mostrar _MENU_ entradas",
+                "loadingRecords": "Cargando...",
+                "processing":     "Procesando...",
+                "search":         "Buscar:",
+                "zeroRecords":    "No se encontraron coincidencias",
+                "paginate": {
+                    "first":      "Primero",
+                    "last":       "Último",
+                    "next":       "Siguiente",
+                    "previous":   "Anterior"
+                },
+                "aria": {
+                    "sortAscending":  ": Activar para ordenar columnas ascendentes",
+                    "sortDescending": ": Activar para ordenar columnas descendientes"
+                }
+            }
+        });
+    });
+</script>
+{% endblock content %}

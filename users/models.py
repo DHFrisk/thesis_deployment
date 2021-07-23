@@ -6,6 +6,7 @@ from django.contrib.auth import authenticate
 from django.apps import apps
 from django.contrib.auth.models import Group
 from django.core.mail import send_mail
+from django.contrib.auth.models import Permission
 
 
 class UserManager(BaseUserManager):
@@ -48,7 +49,7 @@ class UserManager(BaseUserManager):
 
 
 class User(AbstractBaseUser, PermissionsMixin):
-    username= models.CharField(verbose_name="username", max_length=255, unique=True)
+    username= models.CharField(verbose_name="username", max_length=255, unique=True, editable=True)
     first_name= models.CharField(verbose_name="first name", max_length=50, editable=True) 
     last_name= models.CharField(verbose_name="last name", max_length=50, editable=True)   
     email= models.EmailField(verbose_name="email", max_length=255, unique=True, editable=True) 
@@ -64,7 +65,7 @@ class User(AbstractBaseUser, PermissionsMixin):
 
     USERNAME_FIELD= "email"
     REQUIRED_FIELDS= ["username", "first_name", "last_name"]
-
+    
     def __str__(self):
         return self.username
 
@@ -73,6 +74,9 @@ class User(AbstractBaseUser, PermissionsMixin):
 
     def has_module_perms(self, app_label):
         return True
+
+    def get_username(self):
+        return self.username
 
     def get_email(self):
         return self.email
@@ -83,18 +87,96 @@ class User(AbstractBaseUser, PermissionsMixin):
     def get_full_name(self):
         return self.first_name + " " + self.last_name                                                                               
 
-    def get_user_allowed_apps(self):
-        apps_configs= apps.get_app_configs()
-        permissions= [app.label for app in apps_configs if self.has_perm(app.label)]
-        return permissions
+    def get_groups_perms(self):
+        try:
+            groups=self.get_groups()
+            excluded_django_default_apps=["admin", "contenttypes", "sessions", "messages", "staticfiles"]
+            # excluded_django_default_apps=["admin", "auth", "contenttypes", "sessions", "messages", "staticfiles"]
+            apps_configs= apps.get_app_configs()
+            system_apps=[]
+            permissions=[]
+            # groups_permissions=[group.permissions.all().values_list("id", flat=True) for group in groups]
+            # groups_permissions_names=[group.name for group in groups]
+            # groups_permissions=[list(group.permissions.all().values("id", "name"))+[{"id": group.id, "name": group.name}] for group in groups]
+            
+            for group in groups:
+                permission_data=[]
+                for perm in group.permissions.all():
+                    permission_data.append({
+                        "id": perm.id,
+                        "name": perm.name.upper(),
+                        "codename": perm.codename,
+                        "app_label": perm.content_type.app_label,
+                        "group": group.name,
+                        "url": "view_"+str(perm.codename)
+                        #str(perm.content_type.app_label)+
+                        })
+                permissions.append({
+                    "group": group.name.upper(),
+                    "permissions": permission_data
+                    })
+
+            # for app in apps_configs:
+            #     if app.label not in excluded_django_default_apps:
+            #         system_apps.append(app.label)
+
+            # for i in range(len(groups_permissions)):
+            #     for j in range(len(groups_permissions[i])):
+            #         perm= Permission.objects.get(id=groups_permissions[i][j])
+            #         permissions.append({
+            #             "permission": perm,
+            #             "id": perm.id,
+            #             "name": perm.name,
+            #             "codename": perm.codename,
+            #             "model": perm.content_type.model,
+            #             "app": perm.content_type.app_label,
+            #             "group": groups_permissions_names[i][j],
+            #             "view_url": "view_"+str(perm.codename)
+            #         })
+            # for i in groups_permissions:
+            #     for j in i:
+            #         perm= Permission.objects.get(id=j)
+            #         g= Group.permissions.get(permission=perm)
+            #         permissions.append({
+            #             "permission": perm,
+            #             "id": perm.id,
+            #             "name": perm.name,
+            #             "codename": perm.codename,
+            #             "model": perm.content_type.model,
+            #             "app": perm.content_type.app_label,
+            #             "view_url": "view_"+str(perm.codename)
+            #         })
+                    # permissions.append([perm.content_type.app_label, perm.content_type.model])
+
+            # user_permissions=[]
+            
+            # for app in system_apps:
+            #     perm= Permission.objects.filter(content_type__app_label=app).values("id", "content_type_id", "codename", "name")
+            #     for p in perm:
+            #         system_apps_permissions.append(p["id"])
+            # for g_perms_list in groups_permissions:
+            #     for perm in g_perms_list:
+            return permissions
+        except Exception as e:
+            print("===========================")
+            print(e)
+            print("===========================")
+            return e
     
     def set_group(self, group):
         group=Group.objects.get(name=group)#id=group
         group.user_set.add(self)
 
-    def get_group(self, group=None):
-        if group==None:
-            return self.groups.all()
-        else:
-            return self.groups.get(name=group)
+    def remove_group(self, group):
+        group=Group.objects.get(name=group)#id=group
+        group.user_set.remove(self)
+
+    def get_groups(self, group=None):
+        try:
+            if group==None:
+                return self.groups.all()
+            else:
+                return self.groups.get(name=group)
+        except Exception as e:
+            return e
 

@@ -17,8 +17,10 @@ from django.contrib import admin
 from django.urls import path, include
 from departamentos import urls 
 from departamentos_geo import urls
+from municipios_geo import urls
 from edificios import urls
 from unidades import urls
+from multimedia import urls
 from users import urls, views
 from .views import alert
 # from users.views import dashboard
@@ -29,8 +31,10 @@ urlpatterns = [
     path("equipo/", include("equipo.urls")),
     path("departamentos/", include("departamentos.urls")),
     path("departamentos_geo/", include("departamentos_geo.urls")),
+    path("municipios_geo/", include("municipios_geo.urls")),
     path("edificios/", include("edificios.urls")),
     path("unidades/", include("unidades.urls")),
+    path("multimedia/", include("multimedia.urls")),
     path("users/", include("users.urls")),
 
 

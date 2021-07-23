@@ -9,34 +9,44 @@
 {% endblock sidebar %}
 
 {% block content %}
-<div class="row justify-content-center">
-	<div class="card">
-		<div class="card-body">
-			<form method="post" action="{% url 'backend_login' %}">
-				{% csrf_token %}
-				<img src="{% static 'dist/img/login_icon.png' %}" style="height: 220px; width:100%;">
-				<br>
-				<br>
- 				
- 				<div class="form-group justify-content-center">
- 					{% for field in form %}
- 					<div class="fieldWrapper">
- 						<div class="">
- 							{{ field.label_tag }}
- 						</div>
- 						<div class="">
- 							{{ field }}
- 						</div>
- 					</div>
- 					<br>
- 					{% endfor %}
- 				</div>
-
-
-
-				<button class="btn btn-lg btn-primary btn-block" type="submit">Ingresar</button>
-			</form>
+<section class="hold-transition login-page">
+	<div class="login-box">
+		<div class="login-logo">
+			<b>DIDEDUC</b>HEHUE
+			<img src="{% static 'dist/img/login_icon.png' %}" style="height: 220px; width:100%;">
 		</div>
-	</div>
-</div>
+	
+		<div class="login-box">
+		  <div class="card-body login-card-body">
+			<p class="login-box-msg">Ingrese para iniciar sesión</p>
+	  
+			<form action="{% url 'backend_login' %}" method="post">
+				{% csrf_token %}
+				{% for field in form %}
+					 <div class="col-md-12">
+						 <div class="">
+							 {{ field.label_tag }}
+						 </div>
+						 <div class="">
+							 {{ field }}
+						 </div>
+					 </div>
+					 <br>
+				 {% endfor %}
+	
+				<div class="">
+				  <button type="submit" class="btn btn-primary btn-block">Ingresar</button>
+				</div>
+				<hr>
+			</form>
+			<p class="mb-1">
+			  <a href="#">He olvidado mi contraseña</a>
+			</p>
+		  </div>
+	
+		</div>
+	  </div>
+</section>
 {% endblock content %}
+
+

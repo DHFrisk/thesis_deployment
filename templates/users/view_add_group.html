@@ -1,0 +1,57 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}
+<title>Grupos</title>
+{% endblock title %}
+
+{% block content %}
+<div class="row justify-content-center">
+	<div class="card col-md-6">
+		<div class="card-body">
+			<form method="post" action="{% url 'backend_add_group' %}">
+				{% csrf_token %}
+				<img src="{% static 'dist/img/groups_icon.png' %}" class="offset-3" style="height: 220px; width:50%;">
+				<br>
+				<hr>
+ 				
+ 				<div class="form-group justify-content-center overflow-auto" style="height: 350px;">
+ 					{% for field in form %}
+					
+					{% if field.html_name != "apps_permissions" %}
+					<div class="form-group">
+						<div class="">
+							{{ field.label_tag }}
+						</div>
+						<div class="">
+							{{ field }}
+						</div>
+					</div>
+					{% else %}
+					<div class="form-group">
+						<div class="">
+							{{ field.label_tag }}
+						</div>
+						<div class="overflow-auto custom-checkbox border border-dark" style="height: 200px; border-radius: 5px;">
+							{{ field }}
+						</div>
+					</div>
+					{% endif %}
+ 					<br>
+ 					{% endfor %}
+ 				</div>	
+
+				<button class="btn btn-lg btn-primary btn-block" type="submit">Registrar</button>
+			</form>
+		</div>
+	</div>
+</div>
+<script>
+	document.onload= function(){
+		// console.log("osidjf");
+		// let parent= document.getElementsByTagName("ul").parentElementclassList.add("overflow-auto");
+		// console.log(parent);
+		// parent.style= "height:50px;";
+	}
+</script>
+{% endblock content %}

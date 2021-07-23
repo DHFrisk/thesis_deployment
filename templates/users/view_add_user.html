@@ -2,30 +2,44 @@
 {% load static %}
 
 {% block title %}
-<title>Registration</title>
+<title>Registro usuario</title>
 {% endblock title %}
 
 {% block content %}
 <div class="row justify-content-center">
 	<div class="card col-md-6">
 		<div class="card-body">
-			<form method="post" action="{% url 'backend_register' %}">
+			<form method="post" action="{% url 'backend_add_user' %}">
 				{% csrf_token %}
-				<img src="{% static 'dist/img/registration_icon.png' %}" style="height: 220px; width:50%;">
+				<img src="{% static 'dist/img/registration_icon.png' %}" class="offset-3" style="height: 220px; width:50%;">
 				<br>
-				<br>
+				<hr>
  				
- 				<div class="form-group justify-content-center">
+ 				<div class="form-group justify-content-center overflow-auto" style="height: 500px;">
  					{% for field in form %}
- 					<div class="fieldWrapper">
- 						<div class="">
- 							{{ field.label_tag }}
- 						</div>
- 						<div class="">
- 							{{ field }}
- 						</div>
- 					</div>
- 					<br>
+					{% if field.html_name != "groups" %}
+					<div class="form-group">
+						<div class="">
+							{{ field.label_tag }}
+						</div>
+						<div class="">
+							{{ field }}
+						</div>
+					</div>
+					<br>
+					{% else %}
+					<div class="form-group">
+						<div class="">
+							{{ field.label_tag }}
+						</div>
+						<div class="overflow-auto border border-dark" style="
+						height: 200px; border-radius: 5px;">
+							{{ field }}
+						</div>
+					</div>
+					<br>
+					{% endif %}
+ 					
  					{% endfor %}
  				</div>
 				{% for field in registration_form %}
@@ -51,12 +65,12 @@
 					  });
 				</script>
 				{% endif %}
-
-				
-
 				<button class="btn btn-lg btn-primary btn-block" type="submit">Registrar</button>
 			</form>
 		</div>
 	</div>
 </div>
+<script>
+	$(".select")
+</script>
 {% endblock content %}
