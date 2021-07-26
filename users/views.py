@@ -172,6 +172,7 @@ def backend_login(request):
 			email= form.cleaned_data.get("email")
 			password= form.cleaned_data.get("password")
 			user= authenticate(email=email, password=password)
+			print(user)
 			if user is not None and user.is_active:
 				login(request, user)
 				return redirect("view_dashboard")

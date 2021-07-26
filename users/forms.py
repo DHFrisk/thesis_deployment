@@ -43,11 +43,13 @@ class RegistrationForm(UserCreationForm):
     
     def save(self, commit=True):
         if self.cleaned_data["password1"] == self.cleaned_data["password2"]:
-            try:
-                new_user= User.objects.create(email=self.cleaned_data["email"], username=self.cleaned_data["username"], first_name=self.cleaned_data["first_name"], last_name=self.cleaned_data["last_name"], is_staff=self.cleaned_data["is_staff"], is_admin=self.cleaned_data["is_admin"], is_superuser=self.cleaned_data["is_superuser"], user_creation=self.cleaned_data["user_creation"])
-                new_user.set_password(self.cleaned_data["password1"])
-            except Exception as e:
-                return e
+            if self.cleaned_data["password1"] != None:
+                try:
+                    new_user= User.objects.create(email=self.cleaned_data["email"], username=self.cleaned_data["username"], first_name=self.cleaned_data["first_name"], last_name=self.cleaned_data["last_name"], is_staff=self.cleaned_data["is_staff"], is_admin=self.cleaned_data["is_admin"], is_superuser=self.cleaned_data["is_superuser"], user_creation=self.cleaned_data["user_creation"])
+                    new_user.set_password(self.cleaned_data["password1"])
+                    new_user.save()
+                except Exception as e:
+                    raise ValueError(e)
         else:
             raise ValueError("Las contraseñas generadas no coinciden.")
 
