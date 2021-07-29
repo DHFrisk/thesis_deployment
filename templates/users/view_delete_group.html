@@ -2,14 +2,14 @@
 {% load static %}
 
 {% block title %}
-<title>Listado usuarios</title>
+<title>Listado grupos</title>
 {% endblock title %}
 
 {% block content %}
 <div class="">
 	<div class="card">
         <div class="card-header">
-            <h3 class="card-title">Listado usuarios</h3>
+            <h3 class="card-title">Listado grupos</h3>
         </div>
         <div class="card-body table-responsive" style="">
             <table class="table table-bordered table-hover" id="table-users" style="width: 100%;">
@@ -17,7 +17,7 @@
                     <tr>
                         <td>#</td>
                         <td>Grupo</td>
-						<td>Editar</td>
+						<td>Eliminar</td>
                     </tr>
                 </thead>
                 <tbody>
@@ -26,7 +26,7 @@
                         <td>{{group.id}}</td>
                         <td>{{group.name}}</td>
 						<td>
-							<form action="{% url 'view_change_single_group' group_id=group.id %}">
+							<form action="{% url 'view_delete_single_group' group_id=group.id %}">
 								<button class="btn btn-default" type="submit"><i class="fas fa-edit"></i></button>
 								
 							</form>

@@ -53,9 +53,6 @@ class RegistrationForm(UserCreationForm):
         else:
             raise ValueError("Las contraseñas generadas no coinciden.")
 
-        
-        
-
 
 class LoginForm(forms.Form):
     email= forms.EmailField(label="Dirección de correo electrónico", widget=forms.EmailInput)
@@ -74,11 +71,10 @@ class GroupRegistrationForm(forms.Form):
     choices=[]
     for app in system_apps:
         perm=Permission.objects.filter(content_type__app_label=app).values("id", "content_type_id", "codename", "name")
-        if perm:
-            nested_tuple=[]
-            for choice in perm:
-                nested_tuple.append([choice["id"], choice["name"]])
-            choices.append((app.upper(), nested_tuple))
+        nested_tuple=[]
+        for choice in perm:
+            nested_tuple.append([choice["id"], choice["name"]])
+        choices.append((app.upper(), nested_tuple))
     apps_permissions= forms.MultipleChoiceField(label="Permiso(s)", widget=forms.CheckboxSelectMultiple(attrs={"class":"", "style":""}), choices=choices)
     
     def save(self):
@@ -89,28 +85,76 @@ class GroupRegistrationForm(forms.Form):
             return e
 
 
+class ChangeGroupForm(forms.Form):
+    name= forms.CharField(label="Nombre del grupo", max_length=50, widget=forms.TextInput(attrs={"required":True,"class":"form-control form-control-border border-width-2"}))
+    def save(self):
+        try:
+            data=self.cleaned_data
+            Group.objects.create(name=data["name"])
+        except Exception as e:
+            return e
+
+
 # This form is to update a user profile from an admin profile
 class UpdateFormAdmin(forms.Form):
+    user_id= forms.IntegerField(label="ID", widget=forms.NumberInput(attrs={"class":"form-control form-control-border border-width-2", "readonly":True}))
     email= forms.EmailField(max_length=255, help_text="Es necesario una dirección de correo electrónico válida.", label="Dirección de correo electrónico", widget=forms.EmailInput(attrs={"required":True, "class": "form-control form-control-border border-width-2"}))
     username= forms.CharField(label="Nombre de usuario", max_length=255, widget=forms.TextInput(attrs={"required":True, "class":"form-control form-control-border border-width-2"}))
     first_name= forms.CharField(label="Nombre(s)", max_length=255, widget=forms.TextInput(attrs={"class":"form-control form-control-border border-width-2"}))
     last_name= forms.CharField(label="Apellido(s)", max_length=255, widget=forms.TextInput(attrs={"class":"form-control form-control-border border-width-2"}))
-    is_staff= forms.BooleanField(label="Es staff")
-    is_admin= forms.BooleanField(label="Es admin")
-    is_superuser= forms.BooleanField(label="Es super-usuario")
-    # groups= forms.ModelMultipleChoiceField(label="Grupo(s)", widget=forms.CheckboxSelectMultiple(attrs={"class":""}), queryset="")
+    is_staff= forms.BooleanField(label="Es staff", required=False)
+    is_admin= forms.BooleanField(label="Es admin", required=False)
+    is_superuser= forms.BooleanField(label="Es super-usuario", required=False)
 
-    def __init__(self, user, *args, **kwargs):
-        super(UpdateFormAdmin, self).__init__(*args, **kwargs)
-        self.fields["email"].initial= user.get_email()
-        self.fields["username"].initial= user.username
-        self.fields["first_name"].initial= user.first_name
-        self.fields["last_name"].initial= user.last_name
-        self.fields["is_staff"].initial= user.is_staff
-        self.fields["is_admin"].initial= user.is_admin
-        self.fields["is_superuser"].initial= user.is_superuser
+    def save(self, commit=True):
+        try:
+            user= User.objects.get(id=self.cleaned_data["user_id"])
+            user.username= self.cleaned_data["username"]
+            user.email= self.cleaned_data["email"]
+            user.first_name= self.cleaned_data["first_name"]
+            user.last_name= self.cleaned_data["last_name"]
+            user.is_admin= self.cleaned_data["is_admin"]
+            user.is_staff= self.cleaned_data["is_staff"]
+            user.is_superuser= self.cleaned_data["is_superuser"]
+            user.save()
+        except Exception as e:
+            raise ValueError(e)
+    # def __init__(self, user, *args, **kwargs):
+    #     super(UpdateFormAdmin, self).__init__(*args, **kwargs)
+    #     self.fields["email"].initial= user.get_email()
+    #     self.fields["username"].initial= user.username
+    #     self.fields["first_name"].initial= user.first_name
+    #     self.fields["last_name"].initial= user.last_name
+    #     self.fields["is_staff"].initial= user.is_staff
+    #     self.fields["is_admin"].initial= user.is_admin
+    #     self.fields["is_superuser"].initial= user.is_superuser
+    #     self.fields["user_id"].initial= user.id
         # self.fields["groups"].queryset= user.groups.all()
         # self.fields["groups"]= forms.ModelMultipleChoiceField(label="Grupo(s)", widget=forms.CheckboxSelectMultiple(attrs={"class":""}), queryset=user.groups.all())
+    
+
+class DeleteForm(forms.Form):
+    user_id= forms.IntegerField(label="ID", widget=forms.NumberInput(attrs={"class":"form-control form-control-border border-width-2", "readonly":True}))
+    email= forms.EmailField(max_length=255, help_text="Es necesario una dirección de correo electrónico válida.", label="Dirección de correo electrónico", widget=forms.EmailInput(attrs={"required":True, "class": "form-control form-control-border border-width-2"}))
+    username= forms.CharField(label="Nombre de usuario", max_length=255, widget=forms.TextInput(attrs={"required":True, "class":"form-control form-control-border border-width-2"}))
+    first_name= forms.CharField(label="Nombre(s)", max_length=255, widget=forms.TextInput(attrs={"class":"form-control form-control-border border-width-2"}))
+    last_name= forms.CharField(label="Apellido(s)", max_length=255, widget=forms.TextInput(attrs={"class":"form-control form-control-border border-width-2"}))
+    is_staff= forms.BooleanField(label="Es staff", required=False)
+    is_admin= forms.BooleanField(label="Es admin", required=False)
+    is_superuser= forms.BooleanField(label="Es super-usuario", required=False)
+
+    def save(self, commit=True):
+        try:
+            user= User.objects.get(id=self.cleaned_data["user_id"])
+            for group in user.groups.all():
+                user.remove_group(group)
+            user.is_staff= False
+            user.is_admin= False
+            user.is_superuser= False
+            user.is_active= False
+            user.save()
+        except Exception as e:
+            raise ValueError(e)
 
 
 # This form is to update a user profile from an admin profile

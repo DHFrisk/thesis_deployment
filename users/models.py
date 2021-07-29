@@ -159,17 +159,17 @@ class User(AbstractBaseUser, PermissionsMixin):
             #     for perm in g_perms_list:
             return permissions
         except Exception as e:
-            print("===========================")
-            print(e)
-            print("===========================")
             return e
     
     def set_group(self, group):
         group=Group.objects.get(name=group)#id=group
         group.user_set.add(self)
+        self.user_permissions.set(group.permissions.all())
 
     def remove_group(self, group):
-        group=Group.objects.get(name=group)#id=group
+        # group=Group.objects.get(name=group)#id=group
+        for perm in group.permissions.all():
+            self.user_permissions.remove(perm)
         group.user_set.remove(self)
 
     def get_groups(self, group=None):

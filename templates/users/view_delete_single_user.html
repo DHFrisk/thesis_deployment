@@ -2,7 +2,7 @@
 {% load static %}
 
 {% block title %}
-<title>Grupos</title>
+<title>Eliminar suario</title>
 {% endblock title %}
 
 {% block content %}
@@ -14,9 +14,9 @@
         <div class="col-md-6">
             <div class="card card-secondary overflow-auto" style="height: 500;">
                 <div class="card-header">
-                    <h3 class="card-title">Editar usuario</h3>
+                    <h3 class="card-title">Eliminar usuario</h3>
                 </div>
-                <form action="{% url 'backend_change_single_user' %}" method="post">
+                <form action="{% url 'backend_delete_single_user' %}" method="post">
                     {% csrf_token %}
                     <div class="card-body login-card-body">
                         <div class="">
@@ -31,41 +31,27 @@
                             </div>
                             <br>
                             {% endfor %}
-                            <div class="form-group">
-                                <button type="submit" class="form-control btn btn-secondary">Guardar datos</button>
-                                <hr>
-                            </div>
+                            <button type="submit" class="btn btn-secondary">Eliminar usuario</button>
+                            <hr>
                         </div>
-                    </div>
-                </form>
-                <div class="card-body">
-                    <label for="">Grupos(s): </label>
-                    <form action="{% url 'backend_change_single_user_groups' %}" method="post">
-                        {% csrf_token %}
-                        <input type="text" hidden readonly name="user_id_groups" value="{{user_id}}">
                         <div class="overflow-auto custom-checkbox border border-dark" style="height: 200px; border-radius: 5px;">
                             <ul>
                                 {% for u_group in user_groups %}
                                 <li>
-                                    <input type="checkbox" class="custom-checkbox" name="{{ u_group.id }}" value="{{ u_group.id }}" checked id="group-{{u_group.id}}">
+                                    <input type="checkbox" class="custom-checkbox" checked disabled>
                                     <label for="group-{{u_group.id}}"> {{u_group.name}} </label>
                                 </li>
                                 {% endfor %}
                                 {% for group in groups %}
                                 <li>
-                                    <input type="checkbox" class="custom-checkbox" name="{{ group.id }}" value="{{ group.id }}" id="group-{{group.id}}"> 
+                                    <input type="checkbox" class="custom-checkbox" disabled> 
                                     <label for="group-{{group.id}}"> {{group.name}} </label>
                                 </li>
                                 {% endfor %}
                             </ul>
                         </div>
-                        <br>
-                        <div class="form-group">
-                            <button type="submit" class="form-control btn btn-secondary">Guardar grupos</button>
-                            <hr>
-                        </div>
-                    </form>
-                </div>
+                    </div>
+                </form>
             </div>
         </div>
         <div class="col-md-5">
