@@ -405,15 +405,12 @@ def backend_delete_single_group(request):
 		group=Group.objects.get(id=id)
 		group_perms= group.permissions.all()
 		group_users= User.objects.filter(groups__id=group.id)
-
 		for u in group_users:
 			for gp in group_perms:
 				u.user_permissions.remove(gp)
 			group.user_set.remove(u)
-
 		for g in group_perms:
 			group.permissions.remove(g)
-
 		group.delete()
 		return redirect("alert", message_type="success", message="Grupo eliminado exitosamente.", view="view_change_group")
 	except Exception as e:

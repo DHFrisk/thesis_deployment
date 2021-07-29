@@ -79,7 +79,7 @@
           <a href="#" class="d-block">{{ user.get_full_name }}</a>
         </div>
       </div>
-
+      
       <nav class="mt-2">
         <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu" data-accordion="false">
           {% for group in user.get_groups_perms %}
@@ -153,7 +153,6 @@
             </ul>
           </li>
           {% endfor %}
-
           
             
           <li class="nav-item">
