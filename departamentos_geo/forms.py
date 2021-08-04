@@ -23,6 +23,18 @@ class ChangeDepartamentoForm(forms.Form):
             raise ValueError(e)
 
 
+class DeactivateDepartamentoForm(forms.Form):
+    id= forms.CharField(label="ID", widget=forms.TextInput(attrs={"class":"form-control form-control-border border-width-2", "readonly": True}))
+    name= forms.CharField(label="Nombre del departamento", widget=forms.TextInput(attrs={"class":"form-control form-control-border border-width-2", "readonly": True}))
+    def save(self, commit=True):
+        try:
+            departamento=DepartamentoGeo.objects.get(id=self.cleaned_data["id"])
+            departamento.is_active=False
+            departamento.save()
+        except Exception as e:
+            raise ValueError(e)
+
+
 class DeleteDepartamentoForm(forms.Form):
     id= forms.CharField(label="ID", widget=forms.TextInput(attrs={"class":"form-control form-control-border border-width-2", "readonly": True}))
     name= forms.CharField(label="Nombre del departamento", widget=forms.TextInput(attrs={"class":"form-control form-control-border border-width-2", "readonly": True}))

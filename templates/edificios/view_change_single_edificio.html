@@ -2,7 +2,7 @@
 {% load static %}
 
 {% block title %}
-<title>Departamentos(Geo)</title>
+<title>Edificio</title>
 {% endblock title %}
 
 {% block content %}
@@ -14,9 +14,9 @@
         <div class="col-md-6">
             <div class="card card-secondary overflow-auto" style="height: 500;">
                 <div class="card-header">
-                    <h3 class="card-title">Eliminar departamento</h3>
+                    <h3 class="card-title">Editar edificio</h3>
                 </div>
-                <form action="{% url 'backend_deactivate_single_departamentogeo' %}" method="post">
+                <form action="{% url 'backend_change_single_edificio' %}" method="post">
                     {% csrf_token %}
                     <div class="card-body login-card-body">
                         {% for field in form %}
@@ -27,14 +27,14 @@
                         {% endfor %}
                         <br>
                         <div class="form-group">
-                            <button type="submit" class="form-control btn btn-secondary">Eliminar</button>
+                            <button type="submit" class="form-control btn btn-secondary">Guardar datos</button>
                         </div>
                     </div>
                 </form>
             </div>
         </div>
         <div class="col-md-5">
-            <img src="{% static 'dist/img/delete.png' %}">
+            <img src="{% static 'dist/img/edit.png' %}">
         </div>
     </div>
     

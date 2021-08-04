@@ -2,14 +2,14 @@
 {% load static %}
 
 {% block title %}
-<title>Departamentos(Geo)</title>
+<title>Edificio</title>
 {% endblock title %}
 
 {% block content %}
 <div class="row justify-content-center">
 	<div class="card col-md-6">
 		<div class="card-body">
-			<form method="post" action="{% url 'backend_add_departamentogeo' %}">
+			<form method="post" action="{% url 'backend_add_edificio' %}">
 				{% csrf_token %}
 				<img src="{% static 'dist/img/create.png' %}" class="offset-3" style="height: 220px; width:50%;">
 				<br>
@@ -20,7 +20,7 @@
 						<div class="">
 							{{ field.label_tag }}
 						</div>
-							{{ field }}
+							{{ field }}						
 					</div>
  					<br>
  					{% endfor %}
