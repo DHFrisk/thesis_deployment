@@ -1,0 +1,39 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}
+<title>Departamentos</title>
+{% endblock title %}
+
+{% block content %}
+<div class="row justify-content-center">
+	<div class="card col-md-6">
+		<div class="card-body">
+			<form method="post" action="{% url 'backend_add_departamento' %}">
+				{% csrf_token %}
+				<img src="{% static 'dist/img/create.png' %}" class="offset-3" style="height: 220px; width:50%;">
+				<br>
+				<hr>	
+ 				<div class="form-group justify-content-center overflow-auto" style="height: 300px;">
+ 					{% for field in form %}
+					<div class="form-group">
+						<div class="">
+							{{ field.label_tag }}
+						</div>
+							{{ field }}
+					</div>
+ 					<br>
+ 					{% endfor %}
+					<div class="form-group">
+						<button class="form-control btn btn-lg btn-secondary btn-block" type="submit">Registrar</button>
+					</div>
+ 				</div>	
+				
+			</form>
+		</div>
+	</div>
+</div>
+<script>
+
+</script>
+{% endblock content %}

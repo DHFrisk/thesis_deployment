@@ -1,3 +1,5 @@
+from django.contrib import auth
+from django.core.exceptions import PermissionDenied
 from django.db import models
 from django.contrib.auth.models import AbstractUser, AbstractBaseUser, BaseUserManager, PermissionsMixin
 from django.dispatch import receiver
@@ -70,8 +72,16 @@ class User(AbstractBaseUser, PermissionsMixin):
     def __str__(self):
         return self.username
 
-    def has_perm(self, perm, obj=None):
-        return self.is_admin
+    def _user_has_perm(user, perm, obj):
+        for backend in auth.get_backends():
+            if not hasattr(backend, 'has_perm'):
+                continue
+            try:
+                if backend.has_perm(user, perm, obj):
+                    return True
+            except PermissionDenied:
+                return False
+        return False
 
     def has_module_perms(self, app_label):
         return True
@@ -91,15 +101,10 @@ class User(AbstractBaseUser, PermissionsMixin):
     def get_groups_perms(self):
         try:
             groups=self.get_groups()
-            excluded_django_default_apps=["admin", "contenttypes", "sessions", "messages", "staticfiles"]
-            # excluded_django_default_apps=["admin", "auth", "contenttypes", "sessions", "messages", "staticfiles"]
+            excluded_django_default_apps=["admin", "contenttypes", "sessions", "messages", "staticfiles", "multimedia"]
             apps_configs= apps.get_app_configs()
             system_apps=[]
             permissions=[]
-            # groups_permissions=[group.permissions.all().values_list("id", flat=True) for group in groups]
-            # groups_permissions_names=[group.name for group in groups]
-            # groups_permissions=[list(group.permissions.all().values("id", "name"))+[{"id": group.id, "name": group.name}] for group in groups]
-            
             for group in groups:
                 permission_data=[]
                 for perm in group.permissions.all():
@@ -116,47 +121,6 @@ class User(AbstractBaseUser, PermissionsMixin):
                     "group": group.name.upper(),
                     "permissions": permission_data
                     })
-
-            # for app in apps_configs:
-            #     if app.label not in excluded_django_default_apps:
-            #         system_apps.append(app.label)
-
-            # for i in range(len(groups_permissions)):
-            #     for j in range(len(groups_permissions[i])):
-            #         perm= Permission.objects.get(id=groups_permissions[i][j])
-            #         permissions.append({
-            #             "permission": perm,
-            #             "id": perm.id,
-            #             "name": perm.name,
-            #             "codename": perm.codename,
-            #             "model": perm.content_type.model,
-            #             "app": perm.content_type.app_label,
-            #             "group": groups_permissions_names[i][j],
-            #             "view_url": "view_"+str(perm.codename)
-            #         })
-            # for i in groups_permissions:
-            #     for j in i:
-            #         perm= Permission.objects.get(id=j)
-            #         g= Group.permissions.get(permission=perm)
-            #         permissions.append({
-            #             "permission": perm,
-            #             "id": perm.id,
-            #             "name": perm.name,
-            #             "codename": perm.codename,
-            #             "model": perm.content_type.model,
-            #             "app": perm.content_type.app_label,
-            #             "view_url": "view_"+str(perm.codename)
-            #         })
-                    # permissions.append([perm.content_type.app_label, perm.content_type.model])
-
-            # user_permissions=[]
-            
-            # for app in system_apps:
-            #     perm= Permission.objects.filter(content_type__app_label=app).values("id", "content_type_id", "codename", "name")
-            #     for p in perm:
-            #         system_apps_permissions.append(p["id"])
-            # for g_perms_list in groups_permissions:
-            #     for perm in g_perms_list:
             return permissions
         except Exception as e:
             return e

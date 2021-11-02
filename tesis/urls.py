@@ -13,31 +13,26 @@ Including another URLconf
     1. Import the include() function: from django.urls import include, path
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
-from django.contrib import admin
-from django.urls import path, include
-from departamentos import urls 
-from departamentos_geo import urls
-from municipios_geo import urls
-from edificios import urls
-from unidades import urls
-from multimedia import urls
-from users import urls, views
-from .views import alert
+# from django.contrib import admin
+# from django.urls import path, include
+# from users import urls, views
+# from .views import alert
+from django.conf import settings
+from django.conf.urls.static import static
 # from users.views import dashboard
 
 urlpatterns = [
-    path("", views.view_login, ""),
-    path('admin/', admin.site.urls),
-    path("equipo/", include("equipo.urls")),
-    path("departamentos/", include("departamentos.urls")),
-    path("departamentos_geo/", include("departamentos_geo.urls")),
-    path("municipios_geo/", include("municipios_geo.urls")),
-    path("edificios/", include("edificios.urls")),
-    path("unidades/", include("unidades.urls")),
-    path("multimedia/", include("multimedia.urls")),
-    path("users/", include("users.urls")),
-
-
-    # ALERTS
-    path("alert/<str:message_type>/<str:message>/<str:view>", alert, name="alert"),
-]
+    # path("", views.view_login, ""),
+    # path('admin/', admin.site.urls),
+    # path("equipo/", include("equipo.urls")),
+    # path("departamentos/", include("departamentos.urls")),
+    # path("departamentos_geo/", include("departamentos_geo.urls")),
+    # path("municipios_geo/", include("municipios_geo.urls")),
+    # path("edificios/", include("edificios.urls")),
+    # path("unidades/", include("unidades.urls")),
+    # path("multimedia/", include("multimedia.urls")),
+    # path("oficinas/", include("oficinas.urls")),
+    # path("users/", include("users.urls")),
+    # # ALERTS
+    # path("alert/<str:message_type>/<str:message>/<str:view>", alert, name="alert"),
+]+ static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

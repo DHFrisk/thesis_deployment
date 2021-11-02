@@ -44,7 +44,7 @@ def view_logout(request):
 @login_required()
 @require_http_methods(["GET"])
 def view_add_user(request):
-	if request.user.has_perm("add_user"):
+	if request.user.has_perm("users.add_user"):
 		form= RegistrationForm(initial={"user_creation": str(User.objects.get(email=request.user.email, username=request.user.username).id)})
 		return render(request, "users/view_add_user.html", {"form": form})
 	else:
@@ -54,7 +54,7 @@ def view_add_user(request):
 @login_required()
 @require_http_methods(["GET"])
 def view_view_user(request):
-	if request.user.has_perm("view_user"):
+	if request.user.has_perm("users.view_user"):
 		users= User.objects.filter(is_active=True).values("id", "first_name", "last_name", "email", "is_staff", "is_admin", "is_superuser")
 		return render(request, "users/view_view_user.html", {"users": users})
 	else:
@@ -64,7 +64,7 @@ def view_view_user(request):
 @login_required()
 @require_http_methods(["GET"])
 def view_change_user(request):
-	if request.user.has_perm("change_user"):
+	if request.user.has_perm("users.change_user"):
 		users= User.objects.filter(is_active=True).values("id", "first_name", "last_name", "email", "is_staff", "is_admin", "is_superuser", "date_joined", "last_login")
 		return render(request, "users/view_change_user.html", {"users": users})
 	else:
@@ -74,7 +74,7 @@ def view_change_user(request):
 @login_required()
 @require_http_methods(["GET"])
 def view_change_single_user(request, user_id):
-	if request.user.has_perm("change_user"):
+	if request.user.has_perm("users.change_user"):
 		"""I know, I could did it different, but fuck it."""
 		user= User.objects.get(id=user_id)
 		user_groups= user.get_groups()
@@ -108,7 +108,7 @@ def view_change_single_user(request, user_id):
 @login_required()
 @require_http_methods(["GET"])
 def view_delete_user(request):
-	if request.user.has_perm("delete_user"):
+	if request.user.has_perm("users.delete_user"):
 		users= User.objects.filter(is_active=True).values("id", "first_name", "last_name", "email", "is_staff", "is_admin", "is_superuser", "date_joined", "last_login")
 		return render(request, "users/view_delete_user.html", {"users": users})
 	else:
@@ -118,7 +118,7 @@ def view_delete_user(request):
 @login_required()
 @require_http_methods(["GET"])
 def view_delete_single_user(request, user_id):
-	if request.user.has_perm("delete_user"):
+	if request.user.has_perm("users.delete_user"):
 		user= User.objects.get(id=user_id)
 		user_groups= user.get_groups()
 		groups= Group.objects.all()
@@ -141,7 +141,7 @@ def view_delete_single_user(request, user_id):
 @login_required()
 @require_http_methods(["GET"])
 def view_add_group(request):
-	if request.user.has_perm("add_user"):
+	if request.user.has_perm("users.add_user"):
 		form= GroupRegistrationForm()
 		return render(request, "users/view_add_group.html", {"form": form})
 	else:
@@ -151,7 +151,7 @@ def view_add_group(request):
 @login_required()
 @require_http_methods(["GET"])
 def view_view_group(request):
-	if request.user.has_perm("view_user"):
+	if request.user.has_perm("users.view_user"):
 		groups= Group.objects.all()
 		return render(request, "users/view_view_group.html", {"groups": groups})
 	else:
@@ -161,7 +161,7 @@ def view_view_group(request):
 @login_required()
 @require_http_methods(["GET"])
 def view_change_group(request):
-	if request.user.has_perm("change_user"):
+	if request.user.has_perm("users.change_user"):
 		groups= Group.objects.all()
 		return render(request, "users/view_change_group.html", {"groups": groups})
 	else:
@@ -171,7 +171,7 @@ def view_change_group(request):
 @login_required()
 @require_http_methods(["GET"])
 def view_change_single_group(request, group_id):
-	if request.user.has_perm("change_user"):
+	if request.user.has_perm("users.change_user"):
 		group= Group.objects.get(id=group_id)
 		group_perms= group.permissions.all()
 
@@ -199,7 +199,7 @@ def view_change_single_group(request, group_id):
 @login_required()
 @require_http_methods(["GET"])
 def view_delete_group(request):
-	if request.user.has_perm("change_user"):
+	if request.user.has_perm("users.change_user"):
 		groups= Group.objects.all()
 		return render(request, "users/view_delete_group.html", {"groups": groups})
 	else:
@@ -209,7 +209,7 @@ def view_delete_group(request):
 @login_required()
 @require_http_methods(["GET"])
 def view_delete_single_group(request, group_id):
-	if request.user.has_perm("delete_user"):
+	if request.user.has_perm("users.delete_user"):
 		group= Group.objects.get(id=group_id)
 		group_perms= group.permissions.all()
 
@@ -386,6 +386,7 @@ def backend_change_single_group_permissions(request):
 		perms= Permission.objects.all()
 		group= Group.objects.get(id=request.POST["id"])
 		group_perms= group.permissions.all()
+		removed_perms=[]
 		for perm in perms:
 			if str(perm.id) in request.POST:
 				if perm not in group_perms:
@@ -393,6 +394,13 @@ def backend_change_single_group_permissions(request):
 			else:
 				if perm in group_perms:
 					group.permissions.remove(perm)
+					removed_perms.append(perm)
+		group_users= User.objects.filter(groups__id=group.id)
+		group_perms= group.permissions.all()
+		for u in group_users:
+			for rp in removed_perms:
+				u.user_permissions.remove(rp)
+
 		return redirect("alert", message_type="success", message="Se han modificado los permisos del grupo exitosamente.", view="view_change_group")
 	except Exception as e:
 		return redirect("alert", message_type="error", message=f"Ha ocurrido un error: {e}.", view="view_change_group")	

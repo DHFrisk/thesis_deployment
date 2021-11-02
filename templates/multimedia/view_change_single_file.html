@@ -1,0 +1,76 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}
+<title>Archivos</title>
+{% endblock title %}
+
+{% block content %}
+<section class="hold-transition">
+    <div class="login-logo">
+        <b>DIDEDUC</b>HEHUE
+    </div>
+    <div class="row col-md-12">
+        <div class="col-md-6">
+            <div class="card card-secondary overflow-auto" style="height: 500;">
+                <div class="card-header">
+                    <h3 class="card-title">Editar archivo</h3>
+                </div>
+                <form action="{% url 'backend_change_single_file' %}" method="post">
+                    {% csrf_token %}
+                    <div class="card-body login-card-body">
+                        {% for field in form %}
+                        <div class="form-group">
+                            {{ field.label_tag }}
+                            {{ field }}
+                        </div>
+                        {% endfor %}
+                        <br>
+                        <div class="form-group">
+                            <button type="submit" class="form-control btn btn-secondary">Guardar datos</button>
+                        </div>
+                    </div>
+                </form>
+
+                <label for="">Grupos: </label>
+                <form action="{% url 'backend_change_single_file_groups' %}" method="post">
+                    <div class="card-body">
+                        {% csrf_token %}
+                        <input type="text" hidden readonly name="id" value="{{file_id}}">
+                        <div class="overflow-auto border border-dark" style="height: 200px; border-radius: 5px;">
+                            <ul>
+                                {% for f_group in file_groups %}
+                                <li>
+                                    <input type="checkbox" class="" name="{{ f_group.id }}" value="{{ f_group.id }}" checked id="{{f_group.id}}">
+                                    <label for="{{f_group.id}}"> {{f_group.name}} </label>
+                                </li>
+                                {% endfor %}
+                            </ul>
+                            <ul>
+                            {% for group in groups %}
+                                    <li>
+                                    <input type="checkbox" class="" name="{{group.id}}" value="{{group.id}}" id="perm-{{group}}">
+                                    <label for="perm-{{group}}">{{group.name}}</label>
+                                    </li>
+                            {% endfor %}
+                            </ul>
+                        </div>
+                        <div class="form-group">
+                            <br>
+                            <button type="submit" class="form-control btn btn-secondary">Guardar</button>
+                            <hr>
+                        </div>
+                    </div>
+
+
+                </form>
+            </div>
+        </div>
+        <div class="col-md-5">
+            <img src="{% static 'dist/img/edit.png' %}">
+        </div>
+    </div>
+
+</section>
+
+{% endblock content %}

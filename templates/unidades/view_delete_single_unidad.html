@@ -1,0 +1,43 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}
+<title>Unidades</title>
+{% endblock title %}
+
+{% block content %}
+<section class="hold-transition">
+    <div class="login-logo">
+        <b>DIDEDUC</b>HEHUE
+    </div>
+    <div class="row col-md-12">
+        <div class="col-md-6">
+            <div class="card card-secondary overflow-auto" style="height: 500;">
+                <div class="card-header">
+                    <h3 class="card-title">Eliminar unidad</h3>
+                </div>
+                <form action="{% url 'backend_deactivate_single_unidad' %}" method="post">
+                    {% csrf_token %}
+                    <div class="card-body login-card-body">
+                        {% for field in form %}
+                        <div class="form-group">
+                            {{ field.label_tag }}
+                            {{ field }}
+                        </div>
+                        {% endfor %}
+                        <br>
+                        <div class="form-group">
+                            <button type="submit" class="form-control btn btn-secondary">Eliminar</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+        <div class="col-md-5">
+            <img src="{% static 'dist/img/delete.png' %}">
+        </div>
+    </div>
+    
+</section>
+
+{% endblock content %}

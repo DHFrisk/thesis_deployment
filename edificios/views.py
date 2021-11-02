@@ -13,8 +13,8 @@ FRONTEND VIEWS
 @login_required()
 @require_http_methods(["GET"])
 def view_add_edificio(request):
-    if request.user.has_perm("add_edificio"):
-        form = AddEdificioForm()
+    if request.user.has_perm("edificios.add_edificio"):
+        form = AddEdificioForm(initial={"user_creation":request.user.id})
         return render(request, "edificios/view_add_edificio.html", {"form":form})
     else:
         return redirect("alert", message_type="error", message= "No tiene los permisos necesarios para agregar edificios.", view="view_dashboard")
@@ -23,7 +23,7 @@ def view_add_edificio(request):
 @login_required()
 @require_http_methods(["GET"])
 def view_view_edificio(request):
-    if request.user.has_perm("view_edificio"):
+    if request.user.has_perm("edificios.view_edificio"):
         edificios= Edificio.objects.filter(is_active=True)
         return render(request, "edificios/view_view_edificio.html", {"edificios":edificios})
     else:
@@ -33,8 +33,8 @@ def view_view_edificio(request):
 @login_required()
 @require_http_methods(["GET"])
 def view_change_edificio(request):
-    if request.user.has_perm("change_edificio"):
-        edificios= Edificio.objects.filter(is_activeTrue)
+    if request.user.has_perm("edificios.change_edificio"):
+        edificios= Edificio.objects.filter(is_active=True)
         return render(request, "edificios/view_change_edificio.html", {"edificios":edificios})
     else:
         return redirect("alert", message_type="error", message= "No tiene los permisos necesarios para modificar edificios.", view="view_dashboard")
@@ -43,9 +43,9 @@ def view_change_edificio(request):
 @login_required()
 @require_http_methods(["GET"])
 def view_change_single_edificio(request, id):
-    if request.user.has_perm("change_edificio"):
+    if request.user.has_perm("edificios.change_edificio"):
         edificio=Edificio.objects.get(id=id)
-        form= ChangeEdificioForm(initial={"id":edificio.id, "name":edificio.name})
+        form= ChangeEdificioForm(initial={"id":edificio.id, "name":edificio.name, "user_edition":request.user.id})
         return render(request, "edificios/view_change_single_edificio.html", {"form":form})
     else:
         return redirect("alert", message_type="error", message= "No tiene los permisos necesarios para modificar edificios.", view="view_dashboard")
@@ -55,7 +55,7 @@ def view_change_single_edificio(request, id):
 @login_required()
 @require_http_methods(["GET"])
 def view_delete_edificio(request):
-    if request.user.has_perm("delete_edificio"):
+    if request.user.has_perm("edificios.delete_edificio"):
         edificios=Edificio.objects.filter(is_active=True)
         return render(request, "edificios/view_delete_edificio.html", {"edificios":edificios})
     else:
@@ -65,7 +65,7 @@ def view_delete_edificio(request):
 @login_required()
 @require_http_methods(["GET"])
 def view_delete_single_edificio(request, id):
-    if request.user.has_perm("delete_edificio"):
+    if request.user.has_perm("edificios.delete_edificio"):
         edificio=Edificio.objects.get(id=id)
         form= DeleteEdificioForm(initial={"id":edificio.id, "name":edificio.name})
         return render(request, "edificios/view_delete_single_edificio.html", {"form":form})
@@ -76,9 +76,9 @@ def view_delete_single_edificio(request, id):
 @login_required()
 @require_http_methods(["GET"])
 def view_deactivate_single_edificio(request, id):
-    if request.user.has_perm("delete_edificio"):
+    if request.user.has_perm("edificios.delete_edificio"):
         edificio=Edificio.objects.get(id=id)
-        form= DeactivateEdificioForm(initial={"id":edificio.id, "name":edificio.name})
+        form= DeactivateEdificioForm(initial={"id":edificio.id, "name":edificio.name, "user_edition":request.user.id})
         return render(request, "edificios/view_delete_single_edificio.html", {"form":form})
     else:
         return redirect("alert", message_type="error", message= "No tiene los permisos necesarios para eliminar edificios.", view="view_dashboard")
@@ -89,7 +89,7 @@ BACKEND VIEWS
 """
 @require_http_methods(["POST"])
 def backend_add_edificio(request):
-    if request.user.has_perm("add_edificio"):
+    if request.user.has_perm("edificios.add_edificio"):
         try:
             form= AddEdificioForm(request.POST)
             if form.is_valid():
@@ -105,7 +105,7 @@ def backend_add_edificio(request):
 
 @require_http_methods(["POST"])
 def backend_change_single_edificio(request):
-    if request.user.has_perm("change_edificio"):
+    if request.user.has_perm("edificios.change_edificio"):
         try:
             form= ChangeEdificioForm(request.POST)
             if form.is_valid():
@@ -122,7 +122,7 @@ def backend_change_single_edificio(request):
 
 @require_http_methods(["POST"])
 def backend_deactivate_single_edificio(request):
-    if request.user.has_perm("delete_edificio"):
+    if request.user.has_perm("edificios.delete_edificio"):
         try:
             form= DeactivateEdificioForm(request.POST)
             if form.is_valid():
@@ -138,7 +138,7 @@ def backend_deactivate_single_edificio(request):
 
 @require_http_methods(["POST"])
 def backend_delete_single_edificio(request):
-    if request.user.has_perm("delete_edificio"):
+    if request.user.has_perm("edificios.delete_edificio"):
         try:
             form= DeleteEdificioForm(request.POST)
             if form.is_valid():

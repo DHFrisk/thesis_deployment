@@ -47,10 +47,13 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'departamentos.apps.DepartamentosConfig',
     'departamentos_geo.apps.DepartamentosGeoConfig',
+    'municipios_geo.apps.MunicipiosGeoConfig',
     'edificios.apps.EdificiosConfig',
+    'oficinas.apps.OficinasConfig',
     'equipo.apps.EquipoConfig',
     'unidades.apps.UnidadesConfig',
     'users.apps.UsersConfig',
+    'multimedia.apps.MultimediaConfig',
         
 ]
 

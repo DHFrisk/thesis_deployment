@@ -6,16 +6,11 @@ from django.utils.translation import gettext_lazy as _
 from django.contrib.auth.models import Group
 from django.contrib.auth.models import Permission
 from django.apps import apps
-from functools import partial
-from itertools import groupby
-from operator import attrgetter
-from django.forms.models import ModelChoiceIterator, ModelChoiceField
-from django.contrib.auth.password_validation import validate_password
 
 
 class RegistrationForm(UserCreationForm):
     email= forms.EmailField(max_length=255, help_text="Es necesario una dirección de correo electrónico válida.", label="Dirección de correo electrónico", widget=forms.EmailInput(attrs={"class":"form-control form-control-border border-width-2"}))
-    groups= forms.ModelMultipleChoiceField(label="Grupo(s)", widget=forms.CheckboxSelectMultiple, queryset=Group.objects.all(), blank=True)
+    groups= forms.ModelMultipleChoiceField(label="Grupo(s)", widget=forms.CheckboxSelectMultiple, queryset=Group.objects.all())
     # groups= forms.ModelMultipleChoiceField(label="Grupo(s)", widget=forms.SelectMultiple(attrs={"class":"custom-select col-md-12"}), queryset=Group.objects.all(), blank=True)
     password1= forms.CharField(widget=forms.PasswordInput(attrs={"class":"form-control form-control-border border-width-2", "readonly": True}), label="Contraseña (Auto-generada)")
     password2= forms.CharField(widget=forms.PasswordInput(attrs={"class":"form-control form-control-border border-width-2", "readonly": True}), label="Confirmar contraseña (Auto-generada)")
@@ -23,15 +18,15 @@ class RegistrationForm(UserCreationForm):
         model= User
         fields= ["email", "username", "first_name", "last_name", "password1", "password2", "is_admin", "is_staff", "is_superuser", "user_creation"]
         labels= {
-        "email": _("Dirección de correo electrónico"), 
-        "username": _("Nombre de usuario"), 
-        "first_name": _("Nombre(s)"), 
-        "last_name": _("Apellido(s)"), 
-        "password1": _("Contraseña (Auto-generada)"), 
-        "password2": _("Confirmar contraseña (Auto-generada)"), 
+        "email": _("Dirección de correo electrónico"),
+        "username": _("Nombre de usuario"),
+        "first_name": _("Nombre(s)"),
+        "last_name": _("Apellido(s)"),
+        "password1": _("Contraseña (Auto-generada)"),
+        "password2": _("Confirmar contraseña (Auto-generada)"),
         "is_staff": _("Funcionario"),
         "is_admin": _("Administrador"),
-        "is_superuser": _("Super usuario"), 
+        "is_superuser": _("Super usuario"),
         "user_creation": _("Usuario de creación")
         }
         widgets= {
@@ -40,7 +35,7 @@ class RegistrationForm(UserCreationForm):
         "first_name": forms.TextInput(attrs={"class":"form-control form-control-border border-width-2"}),
         "last_name": forms.TextInput(attrs={"class":"form-control form-control-border border-width-2"}),
         }
-    
+
     def save(self, commit=True):
         if self.cleaned_data["password1"] == self.cleaned_data["password2"]:
             if self.cleaned_data["password1"] != None:
@@ -55,8 +50,8 @@ class RegistrationForm(UserCreationForm):
 
 
 class LoginForm(forms.Form):
-    email= forms.EmailField(label="Dirección de correo electrónico", widget=forms.EmailInput)
-    password= forms.CharField(label="Contraseña", widget=forms.PasswordInput)
+    email= forms.EmailField(label="Dirección de correo electrónico",widget=forms.EmailInput(attrs={"class":"form-control form-control-border border-width-2"}))
+    password= forms.CharField(label="Contraseña", widget=forms.PasswordInput(attrs={"class":"form-control form-control-border border-width-2"}))
 
 
 class GroupRegistrationForm(forms.Form):
@@ -76,7 +71,7 @@ class GroupRegistrationForm(forms.Form):
             nested_tuple.append([choice["id"], choice["name"]])
         choices.append((app.upper(), nested_tuple))
     apps_permissions= forms.MultipleChoiceField(label="Permiso(s)", widget=forms.CheckboxSelectMultiple(attrs={"class":"", "style":""}), choices=choices)
-    
+
     def save(self):
         try:
             data=self.cleaned_data
@@ -131,7 +126,7 @@ class UpdateFormAdmin(forms.Form):
     #     self.fields["user_id"].initial= user.id
         # self.fields["groups"].queryset= user.groups.all()
         # self.fields["groups"]= forms.ModelMultipleChoiceField(label="Grupo(s)", widget=forms.CheckboxSelectMultiple(attrs={"class":""}), queryset=user.groups.all())
-    
+
 
 class DeleteForm(forms.Form):
     user_id= forms.IntegerField(label="ID", widget=forms.NumberInput(attrs={"class":"form-control form-control-border border-width-2", "readonly":True}))
@@ -160,20 +155,20 @@ class DeleteForm(forms.Form):
 # This form is to update a user profile from an admin profile
 class UpdateForm(forms.Form):
     email= forms.EmailField(max_length=255, help_text="Es necesario una dirección de correo electrónico válida.", label="Dirección de correo electrónico")
-    groups= forms.ModelMultipleChoiceField(label="Grupo(s)", widget=forms.CheckboxSelectMultiple, queryset=Group.objects.all(), blank=True)
+    groups= forms.ModelMultipleChoiceField(label="Grupo(s)", widget=forms.CheckboxSelectMultiple, queryset=Group.objects.all())
     class Meta:
         model= User
         fields= ["email", "username", "first_name", "last_name", "is_admin", "is_staff", "is_superuser"]
         labels= {
-        "email": _("Dirección de correo electrónico"), 
-        "username": _("Nombre de usuario"), 
-        "first_name": _("Nombre(s)"), 
-        "last_name": _("Apellido(s)"), 
-        "is_admin": _("Administrador"), 
-        "is_staff": _("Funcionario"), 
+        "email": _("Dirección de correo electrónico"),
+        "username": _("Nombre de usuario"),
+        "first_name": _("Nombre(s)"),
+        "last_name": _("Apellido(s)"),
+        "is_admin": _("Administrador"),
+        "is_staff": _("Funcionario"),
         "is_superuser": _("Super usuario")
         }
-    
+
     def save(self):
         username= self.cleaned_data["username"]
         email= self.cleaned_data["email"]
@@ -183,4 +178,3 @@ class UpdateForm(forms.Form):
         is_active= self.cleaned_data["is_active"]
         is_superuser= self.cleaned_data["is_superuser"]
         is_staff= self.cleaned_data["is_staff"]
-

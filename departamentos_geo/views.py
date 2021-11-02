@@ -4,7 +4,6 @@ from .forms import *
 from .models import *
 from django.shortcuts import render, redirect, get_object_or_404
 from django.views.decorators.http import require_http_methods
-from django.contrib.auth.models import Permission
 # Create your views here.
 
 """
@@ -13,8 +12,8 @@ FRONTEND VIEWS
 @login_required()
 @require_http_methods(["GET"])
 def view_add_departamentogeo(request):
-    if request.user.has_perm("add_departamentogeo"):
-        form = AddDepartamentoForm()
+    if request.user.has_perm("departamentos_geo.add_departamentogeo"):
+        form = AddDepartamentoForm(initial={"user_creation":request.user.id})
         return render(request, "departamentos_geo/view_add_departamentogeo.html", {"form":form})
     else:
         return redirect("alert", message_type="error", message= "No tiene los permisos necesarios para agregar departamentos.", view="view_dashboard")
@@ -23,7 +22,7 @@ def view_add_departamentogeo(request):
 @login_required()
 @require_http_methods(["GET"])
 def view_view_departamentogeo(request):
-    if request.user.has_perm("view_departamentogeo"):
+    if request.user.has_perm("departamentos_geo.view_departamentogeo"):
         departamentos= DepartamentoGeo.objects.filter(is_active=True)
         return render(request, "departamentos_geo/view_view_departamentogeo.html", {"departamentos":departamentos})
     else:
@@ -33,7 +32,7 @@ def view_view_departamentogeo(request):
 @login_required()
 @require_http_methods(["GET"])
 def view_change_departamentogeo(request):
-    if request.user.has_perm("change_departamentogeo"):
+    if request.user.has_perm("departamentos_geo.change_departamentogeo"):
         departamentos= DepartamentoGeo.objects.filter(is_active=True)
         return render(request, "departamentos_geo/view_change_departamentogeo.html", {"departamentos":departamentos})
     else:
@@ -43,9 +42,9 @@ def view_change_departamentogeo(request):
 @login_required()
 @require_http_methods(["GET"])
 def view_change_single_departamentogeo(request, id):
-    if request.user.has_perm("change_departamentogeo"):
+    if request.user.has_perm("departamentos_geo.change_departamentogeo"):
         departamento=DepartamentoGeo.objects.get(id=id)
-        form= ChangeDepartamentoForm(initial={"id":departamento.id, "name":departamento.name})
+        form= ChangeDepartamentoForm(initial={"id":departamento.id, "name":departamento.name, "user_edition":request.user.id})
         return render(request, "departamentos_geo/view_change_single_departamentogeo.html", {"form":form})
     else:
         return redirect("alert", message_type="error", message= "No tiene los permisos necesarios para modificar departamentos.", view="view_dashboard")
@@ -55,7 +54,7 @@ def view_change_single_departamentogeo(request, id):
 @login_required()
 @require_http_methods(["GET"])
 def view_delete_departamentogeo(request):
-    if request.user.has_perm("delete_departamentogeo"):
+    if request.user.has_perm("departamentos_geo.delete_departamentogeo"):
         departamentos=DepartamentoGeo.objects.filter(is_active=True)
         return render(request, "departamentos_geo/view_delete_departamentogeo.html", {"departamentos":departamentos})
     else:
@@ -65,7 +64,7 @@ def view_delete_departamentogeo(request):
 @login_required()
 @require_http_methods(["GET"])
 def view_delete_single_departamentogeo(request, id):
-    if request.user.has_perm("delete_departamentogeo"):
+    if request.user.has_perm("departamentos_geo.delete_departamentogeo"):
         departamento=DepartamentoGeo.objects.get(id=id)
         form= DeleteDepartamentoForm(initial={"id":departamento.id, "name":departamento.name})
         return render(request, "departamentos_geo/view_delete_single_departamentogeo.html", {"form":form})
@@ -76,9 +75,9 @@ def view_delete_single_departamentogeo(request, id):
 @login_required()
 @require_http_methods(["GET"])
 def view_deactivate_single_departamentogeo(request, id):
-    if request.user.has_perm("delete_departamentogeo"):
+    if request.user.has_perm("departamentos_geo.delete_departamentogeo"):
         departamento=DepartamentoGeo.objects.get(id=id)
-        form= DeactivateDepartamentoForm(initial={"id":departamento.id, "name":departamento.name})
+        form= DeactivateDepartamentoForm(initial={"id":departamento.id, "name":departamento.name, "user_edition":request.user.id})
         return render(request, "departamentos_geo/view_delete_single_departamentogeo.html", {"form":form})
     else:
         return redirect("alert", message_type="error", message= "No tiene los permisos necesarios para eliminar departamentos.", view="view_dashboard")
@@ -89,7 +88,7 @@ BACKEND VIEWS
 """
 @require_http_methods(["POST"])
 def backend_add_departamentogeo(request):
-    if request.user.has_perm("add_departamentogeo"):
+    if request.user.has_perm("departamentos_geo.add_departamentogeo"):
         try:
             form= AddDepartamentoForm(request.POST)
             if form.is_valid():
@@ -105,7 +104,7 @@ def backend_add_departamentogeo(request):
 
 @require_http_methods(["POST"])
 def backend_change_single_departamentogeo(request):
-    if request.user.has_perm("change_departamentogeo"):
+    if request.user.has_perm("departamentos_geo.change_departamentogeo"):
         try:
             form= ChangeDepartamentoForm(request.POST)
             if form.is_valid():
@@ -122,7 +121,7 @@ def backend_change_single_departamentogeo(request):
 
 @require_http_methods(["POST"])
 def backend_deactivate_single_departamentogeo(request):
-    if request.user.has_perm("delete_departamentogeo"):
+    if request.user.has_perm("departamentos_geo.delete_departamentogeo"):
         try:
             form= DeactivateDepartamentoForm(request.POST)
             if form.is_valid():
@@ -138,7 +137,7 @@ def backend_deactivate_single_departamentogeo(request):
 
 @require_http_methods(["POST"])
 def backend_delete_single_departamentogeo(request):
-    if request.user.has_perm("delete_departamentogeo"):
+    if request.user.has_perm("departamentos_geo.delete_departamentogeo"):
         try:
             form= DeleteDepartamentoForm(request.POST)
             if form.is_valid():

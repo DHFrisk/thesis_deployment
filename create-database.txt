@@ -1,0 +1,8 @@
+comentar todas las urls y los import en tesis/urls.py
+-------------------------------------------------------------------
+from users.models import *
+from django.contrib.auth.models import Permission
+u=User.objects.get(id=1)
+perms=Permission.objects.all()
+u.user_permissions.set(perms)
+u.save()

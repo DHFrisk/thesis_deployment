@@ -26,7 +26,7 @@
                         <td>{{edificio.id}}</td>
                         <td>{{edificio.name}}</td>
                         <td>
-                            <form action="{% url 'view_delete_single_edificio' id=edificio.id %}" method="get">
+                            <form action="{% url 'view_deactivate_single_edificio' id=edificio.id %}" method="get">
                                 <button type="submit" class="btn btn-default form-control"><i class="fas fa-trash-alt"></i></button>
                             </form>
                         </td>
