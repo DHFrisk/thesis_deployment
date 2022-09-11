@@ -12,6 +12,7 @@ import json
 from django.contrib.auth.models import Permission
 from django.contrib.contenttypes.models import ContentType
 import datetime
+from django.db import transaction
 # Create your views here.
 
 """
@@ -233,6 +234,12 @@ def view_delete_single_group(request, group_id):
 	else:
 		return redirect("alert", message_type="error", message= "No tiene los permisos necesarios para eliminar grupos.", view="view_dashboard")
 
+
+@require_http_methods(["GET"])
+def view_recover_pass(request):
+	form= RecoverPass()
+	return render(request, "users/view_recover_pass.html", {"form":form})
+
 # @login_required()
 # @require_http_methods(["GET"])
 # def view_update(request, user_id):
@@ -246,6 +253,7 @@ END FRONTEND VIEWS
 BACKEND VIEWS
 """
 @require_http_methods(["POST"])
+@transaction.atomic
 def backend_add_user(request):
 	try:
 		context={}
@@ -270,11 +278,11 @@ def backend_add_user(request):
 			errors_raw= str(form.errors.as_data())
 			return redirect("alert", message_type="warning", message=f"No se han llenado los campos de forma correcta, intente de nuevo. "+errors_raw, view="view_add_user")
 	except Exception as e:
-		print(e)
 		return redirect("alert", message_type="error", message=str(e), view="view_add_user")
 
 
 @require_http_methods(["POST"])
+@transaction.atomic
 def backend_change_single_user(request):
 	try:
 		post= request.POST.copy()
@@ -290,6 +298,7 @@ def backend_change_single_user(request):
 
 
 @require_http_methods(["POST"])
+@transaction.atomic
 def backend_delete_single_user(request):
 	try:
 		form= DeleteForm(request.POST)
@@ -301,6 +310,7 @@ def backend_delete_single_user(request):
 
 
 @require_http_methods(["POST"])
+@transaction.atomic
 def backend_change_single_user_groups(request):
 	try:
 		post= request.POST.copy()
@@ -328,6 +338,7 @@ def backend_change_single_user_groups(request):
 
 
 @require_http_methods(["POST"])
+@transaction.atomic
 def backend_login(request):
 	try:
 		context={}
@@ -336,7 +347,6 @@ def backend_login(request):
 			email= form.cleaned_data.get("email")
 			password= form.cleaned_data.get("password")
 			user= authenticate(email=email, password=password)
-			print(user)
 			if user is not None and user.is_active:
 				login(request, user)
 				return redirect("view_dashboard")
@@ -349,6 +359,7 @@ def backend_login(request):
 
 
 @require_http_methods(["POST"])
+@transaction.atomic
 def backend_add_group(request):
 	try:
 		form= GroupRegistrationForm(request.POST)
@@ -368,6 +379,7 @@ def backend_add_group(request):
 
 
 @require_http_methods(["POST"])
+@transaction.atomic
 def backend_change_single_group(request):
 	try:
 		id= request.POST["id"]
@@ -381,6 +393,7 @@ def backend_change_single_group(request):
 
 
 @require_http_methods(["POST"])
+@transaction.atomic
 def backend_change_single_group_permissions(request):
 	try:
 		perms= Permission.objects.all()
@@ -407,6 +420,7 @@ def backend_change_single_group_permissions(request):
 
 
 @require_http_methods(["POST"])
+@transaction.atomic
 def backend_delete_single_group(request):
 	try:
 		id= request.POST["id"]
@@ -422,9 +436,28 @@ def backend_delete_single_group(request):
 		group.delete()
 		return redirect("alert", message_type="success", message="Grupo eliminado exitosamente.", view="view_change_group")
 	except Exception as e:
-		print(e)
 		return redirect("alert", message_type="error", message=f"Ha ocurrido un error: {e}.", view="view_delete_group")
 
+
+@require_http_methods(["POST"])
+@transaction.atomic
+def backend_recover_pass(request):
+	try:
+		form=RecoverPass(request.POST)
+		if form.is_valid():
+			email=form.cleaned_data.get("email")
+			if len(User.objects.filter(email=email)) == 0:
+				return redirect("alert", message_type="error", message=f"El email ingresado no se encuentra registrado", view="view_login")
+			else:
+				password_parts= [string.ascii_letters, string.digits]
+				password= "".join([random.choice(password_parts[0]) for i in range(12)]) + "".join([random.choice(password_parts[1]) for i in range(12)]) + "".join(random.choice(password_parts[0]) for i in range(4))
+				user=User.objects.get(email=email)
+				user.email_user(email, "Su nueva clave es: "+password)
+				user.set_password(password)
+				user.save()
+				return redirect("alert", message_type="success", message="Clave reestablecida exitosamente, por favor revise su email.", view="view_login")
+	except Exception as e:
+		return redirect("alert", message_type="error", message=f"Ha ocurrido un error: {e}.", view="view_login")
 """
 END BACKEND VIEWS
 """

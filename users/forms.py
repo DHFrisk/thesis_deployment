@@ -178,3 +178,6 @@ class UpdateForm(forms.Form):
         is_active= self.cleaned_data["is_active"]
         is_superuser= self.cleaned_data["is_superuser"]
         is_staff= self.cleaned_data["is_staff"]
+
+class RecoverPass(forms.Form):
+    email= forms.EmailField(label="Dirección de correo electrónico",widget=forms.EmailInput(attrs={"class":"form-control form-control-border border-width-2"}))

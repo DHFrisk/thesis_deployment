@@ -177,7 +177,7 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 
-EMAIL_HOST = 'smtp-relay.sendinblue.com'
+EMAIL_HOST = 'smtp.mailgun.org'
 EMAIL_PORT = 587
-EMAIL_HOST_USER = 'ricboarg@yahoo.com'
-EMAIL_HOST_PASSWORD = 'S8VD09TyRYQErdBb'
+EMAIL_HOST_USER = 'postmaster@sandboxe5cce8bfa7904ba996d51fbf5ca90e72.mailgun.org'
+EMAIL_HOST_PASSWORD = 'af99a783d6cdcbaabf458973a26e5724-07a637b8-21214140'

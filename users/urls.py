@@ -19,6 +19,7 @@ urlpatterns=[
    path("view_change_single_group/<int:group_id>", view_change_single_group, name="view_change_single_group"),
    path("view_delete_group", view_delete_group, name="view_delete_group"),
    path("view_delete_single_group/<int:group_id>", view_delete_single_group, name="view_delete_single_group"),
+   path("view_recover_pass", view_recover_pass, name="view_recover_pass"),
    
    # path("view_update", view_update, name="view_update"),
    
@@ -32,6 +33,7 @@ urlpatterns=[
    path("backend_login", backend_login, name="backend_login"),
    path("backend_add_group", backend_add_group, name="backend_add_group"),
    path("backend_delete_single_group", backend_delete_single_group, name="backend_delete_single_group"),
+   path("backend_recover_pass", backend_recover_pass, name="backend_recover_pass"),
 
    # path("backend_update", backend_update, name="backend_update"),
 
